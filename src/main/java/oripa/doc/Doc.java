@@ -77,6 +77,7 @@ public class Doc {
 
 	private CreasePattern creasePattern = null;
 	private ArrayList<OriLine> crossLines = new ArrayList<OriLine>();
+	private ArrayList<Vector2d> crossPoints = new ArrayList<Vector2d>();
 
 
 	// Origami Model for Estimation
@@ -354,6 +355,47 @@ public class Doc {
 	}
 
 
+	public void setCrossPoint(Vector2d point) {
+		crossPoints.clear();
+
+		List<OriFace> sortedFaces = origamiModel.getSortedFaces();
+
+		for (OriFace face : sortedFaces) {
+			OriHalfedge he = face.halfedges.get(1);
+			// a1,a2 form coordinate axes in mapped (after) space.
+			Vector2d a1 = new Vector2d(he.next.positionForDisplay);
+			a1.sub(he.positionForDisplay);
+			Vector2d a2 = new Vector2d(-a1.y, a1.x);
+			Vector2d pointRel = new Vector2d(point);
+			pointRel.sub(he.positionForDisplay);
+			double p1 = a1.dot(pointRel) / a1.lengthSquared();
+			double p2 = a2.dot(pointRel) / a2.lengthSquared();
+			// b1,b2 form coordinate axes in premapped (before) space.
+			Vector2d b1 = new Vector2d(he.next.vertex.preP);
+			b1.sub(he.vertex.preP);
+			Vector2d b2;
+			if (GeomUtil.CCWcheck(he.prev.positionForDisplay, he.positionForDisplay, he.next.positionForDisplay) == GeomUtil.CCWcheck(he.prev.vertex.preP, he.vertex.preP, he.next.vertex.preP))
+				b2 = new Vector2d(-b1.y, b1.x);
+			else
+				b2 = new Vector2d(b1.y, -b1.x);
+			// Map a1,a2 coordinates to b1,b2 coordinates.
+			b1.scale(p1);
+			b2.scale(p2);
+			Vector2d preP = new Vector2d(he.vertex.preP);
+			preP.add(b1);
+			preP.add(b2);
+			// Check for containment.
+			boolean inside = true;
+			for (OriHalfedge he2 : face.halfedges) {
+				if (GeomUtil.CCWcheck(he2.next.vertex.preP, he2.vertex.preP, preP)) {
+					inside = false;
+					break;
+				}
+			}
+			if (inside)
+				crossPoints.add(preP);
+		}
+	}
 
 		
 	public Collection<Vector2d> getVerticesAround(Vector2d v){
@@ -416,6 +458,13 @@ public class Doc {
 	 */
 	public void setCrossLines(ArrayList<OriLine> crossLines) {
 		this.crossLines = crossLines;
+	}
+
+	/**
+	 * @return crossPoints
+	 */
+	public ArrayList<Vector2d> getCrossPoints() {
+		return crossPoints;
 	}
 
 	

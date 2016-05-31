@@ -34,6 +34,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -318,6 +319,17 @@ ActionListener, ComponentListener, Observer{
 					g2d.draw(new Line2D.Double(v0.x, v0.y, v1.x, v1.y));
 
 				}
+			}
+		}
+
+		if (PaintConfig.bDispCrossPoint) {
+			List<Vector2d> crossPoints = document.getCrossPoints();
+			g2d.setStroke(LineSetting.STROKE_TMP_OUTLINE);
+			g2d.setColor(Color.MAGENTA);
+
+			for (Vector2d point : crossPoints) {
+				g2d.fill(new Ellipse2D.Double(point.x - 10, point.y - 10, 10*2+1, 10*2+1));
+
 			}
 		}
 

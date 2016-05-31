@@ -68,6 +68,7 @@ implements ActionListener, AdjustmentListener, Observer{
     private JMenuItem menuItemExportOBJ = new JMenuItem("Export to OBJ file");
     private JMenuItem menuItemFlip = new JMenuItem(ORIPA.res.getString("MENU_Invert"));
     private JCheckBoxMenuItem menuItemCrossLine = new JCheckBoxMenuItem("Show Cross-Line", false);
+    private JCheckBoxMenuItem menuItemCrossPoint = new JCheckBoxMenuItem("Show Cross-Point", false);
     public JCheckBoxMenuItem menuItemSlideFaces = new JCheckBoxMenuItem(ORIPA.res.getString("MENU_SlideFaces"), false);
     public JLabel hintLabel = new JLabel(ORIPA.res.getString("Direction_Basic"));
     private JMenu dispSubMenu = new JMenu(ORIPA.res.getString("MENU_DispType"));
@@ -75,8 +76,8 @@ implements ActionListener, AdjustmentListener, Observer{
     private JRadioButtonMenuItem menuItemFillWhite = new JRadioButtonMenuItem(ORIPA.res.getString("MENU_FillWhite"));
     private JRadioButtonMenuItem menuItemFillAlpha = new JRadioButtonMenuItem(ORIPA.res.getString("MENU_FillAlpha"));
     private JRadioButtonMenuItem menuItemFillNone = new JRadioButtonMenuItem(ORIPA.res.getString("MENU_DrawLines"));
-    private JScrollBar scrollBarAngle = new JScrollBar(JScrollBar.HORIZONTAL, 90, 5, 0, 185);
-    private JScrollBar scrollBarPosition = new JScrollBar(JScrollBar.VERTICAL, 0, 5, -150, 150);
+    private JScrollBar scrollBarHorizontal = new JScrollBar(JScrollBar.HORIZONTAL, 500, 5, 0, 1000);
+    private JScrollBar scrollBarVertical = new JScrollBar(JScrollBar.VERTICAL, 500, 5, 0, 1000);
 
     public ModelViewFrame() {
     	
@@ -88,8 +89,8 @@ implements ActionListener, AdjustmentListener, Observer{
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(screen, BorderLayout.CENTER);
         getContentPane().add(hintLabel, BorderLayout.SOUTH);
-        getContentPane().add(scrollBarAngle, BorderLayout.NORTH);
-        getContentPane().add(scrollBarPosition, BorderLayout.WEST);
+        getContentPane().add(scrollBarHorizontal, BorderLayout.NORTH);
+        getContentPane().add(scrollBarVertical, BorderLayout.WEST);
 
         // Construct menu bar
         JMenuBar menuBar = new JMenuBar();
@@ -100,6 +101,7 @@ implements ActionListener, AdjustmentListener, Observer{
 
         menuDisp.add(dispSubMenu);
         menuDisp.add(menuItemCrossLine);
+        menuDisp.add(menuItemCrossPoint);
         ButtonGroup dispGroup = new ButtonGroup();
         dispGroup.add(menuItemFillAlpha);
         dispSubMenu.add(menuItemFillAlpha);
@@ -116,13 +118,14 @@ implements ActionListener, AdjustmentListener, Observer{
         menuItemExportOBJ.addActionListener(this);
 
         menuItemCrossLine.addActionListener(this);
+        menuItemCrossPoint.addActionListener(this);
         menuBar.add(menuFile);
         menuBar.add(menuDisp);
 
         setJMenuBar(menuBar);
 
-        scrollBarAngle.addAdjustmentListener(this);
-        scrollBarPosition.addAdjustmentListener(this);
+        scrollBarHorizontal.addAdjustmentListener(this);
+        scrollBarVertical.addAdjustmentListener(this);
 
     }
 
@@ -143,7 +146,19 @@ implements ActionListener, AdjustmentListener, Observer{
         } else if (e.getSource() == menuItemCrossLine) {
             PaintConfig.bDispCrossLine = menuItemCrossLine.isSelected();
             if (menuItemCrossLine.isSelected()) {
+                PaintConfig.bDispCrossPoint = false;
+                menuItemCrossPoint.setSelected(false);
                 screen.recalcCrossLine();
+            } else {
+                screen.repaint();
+                ORIPA.mainFrame.repaint();
+            }
+        } else if (e.getSource() == menuItemCrossPoint) {
+            PaintConfig.bDispCrossPoint = menuItemCrossPoint.isSelected();
+            if (menuItemCrossPoint.isSelected()) {
+                PaintConfig.bDispCrossLine = false;
+                menuItemCrossLine.setSelected(false);
+                screen.recalcCrossPoint();
             } else {
                 screen.repaint();
                 ORIPA.mainFrame.repaint();
@@ -173,10 +188,12 @@ implements ActionListener, AdjustmentListener, Observer{
 
     @Override
     public void adjustmentValueChanged(AdjustmentEvent e) {
-        if (e.getSource() == scrollBarAngle) {
-            screen.setCrossLineAngle(e.getValue());
-        } else if (e.getSource() == scrollBarPosition) {
-            screen.setCrossLinePosition(e.getValue());
+        if (e.getSource() == scrollBarHorizontal) {
+            screen.setCrossLineAngle(e.getValue() * 185 / 1000);  // 0..185
+            screen.setCrossPointX(e.getValue() * 400 / 1000 - 200);  // -200..200
+        } else if (e.getSource() == scrollBarVertical) {
+            screen.setCrossLinePosition(e.getValue() * 300 / 1000 - 150); // -150..150
+            screen.setCrossPointY(e.getValue() * 400 / 1000 - 200);  // -200..200
         }
 
     }

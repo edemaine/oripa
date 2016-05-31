@@ -35,6 +35,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.List;
@@ -68,6 +69,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, ActionListene
 	private AffineTransform affineTransform = new AffineTransform();
 	public boolean dispSlideFace = false;
 	private OriLine crossLine = null;
+	private Vector2d crossPoint = new Vector2d(0, 0);
+	private int crossPointX = 0;
+	private int crossPointY = 0;
 	private int crossLineAngleDegree = 90;
 	private double crossLinePosition = 0;
 
@@ -156,6 +160,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, ActionListene
 
 			g2d.draw(new Line2D.Double(crossLine.p0.x, crossLine.p0.y, crossLine.p1.x, crossLine.p1.y));
 		}
+		if (PaintConfig.bDispCrossPoint) {
+			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+			g2d.setColor(Color.RED);
+
+			g2d.fill(new Ellipse2D.Double(crossPoint.x - 10, crossPoint.y - 10, 10*2+1, 10*2+1));
+		}
 	}
 
 	// Update the current AffineTransform
@@ -226,6 +236,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, ActionListene
 		recalcCrossLine();
 	}
 
+	public void setCrossPointX(int x) {
+		crossPointX = x;
+		recalcCrossPoint();
+	}
+
+	public void setCrossPointY(int y) {
+		crossPointY = y;
+		recalcCrossPoint();
+	}
+
 	public void recalcCrossLine() {
 		Vector2d dir = new Vector2d(Math.cos(Math.PI * crossLineAngleDegree / 180.0), 
 				Math.sin(Math.PI * crossLineAngleDegree / 180.0));
@@ -238,6 +258,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, ActionListene
 		crossLine.p1.add(moveVec);
 
 		ORIPA.doc.setCrossLine(crossLine);
+		repaint();
+		ORIPA.mainFrame.repaint();
+	}
+
+	public void recalcCrossPoint() {
+                crossPoint.x = modelCenter.x + crossPointX;
+                crossPoint.y = modelCenter.y + crossPointY;
+		ORIPA.doc.setCrossPoint(crossPoint);
 		repaint();
 		ORIPA.mainFrame.repaint();
 	}

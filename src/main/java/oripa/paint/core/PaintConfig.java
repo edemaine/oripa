@@ -46,6 +46,7 @@ public class PaintConfig {
     public static boolean dispMVLines = true;
     public static boolean dispAuxLines = true;
     public static boolean bDispCrossLine = false;
+    public static boolean bDispCrossPoint = false;
     public static boolean bDoFullEstimation = true;
     public static int inputLineType = oripa.value.OriLine.TYPE_RIDGE;
     
