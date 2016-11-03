@@ -78,6 +78,8 @@ public class Doc {
 	private CreasePattern creasePattern = null;
 	private ArrayList<OriLine> crossLines = new ArrayList<OriLine>();
 	private ArrayList<Vector2d> crossPoints = new ArrayList<Vector2d>();
+	private int crossX = 0, crossY = 0;
+	private String crossMode = "";
 
 
 	// Origami Model for Estimation
@@ -310,7 +312,29 @@ public class Doc {
 	
 	
 
+	public int getCrossX() {
+		return crossX;
+	}
 
+	public int getCrossY() {
+		return crossY;
+	}
+
+	public String getCrossMode() {
+		return crossMode;
+	}
+
+	public void setCrossX(int x) {
+		crossX = x;
+	}
+
+	public void setCrossY(int y) {
+		crossY = y;
+	}
+
+	public void setCrossMode(String mode) {
+		crossMode = mode;
+	}
 
 	public void setCrossLine(OriLine line) {
 		crossLines.clear();

@@ -146,20 +146,24 @@ implements ActionListener, AdjustmentListener, Observer{
         } else if (e.getSource() == menuItemCrossLine) {
             PaintConfig.bDispCrossLine = menuItemCrossLine.isSelected();
             if (menuItemCrossLine.isSelected()) {
+                ORIPA.doc.setCrossMode("line");
                 PaintConfig.bDispCrossPoint = false;
                 menuItemCrossPoint.setSelected(false);
                 screen.recalcCrossLine();
             } else {
+                ORIPA.doc.setCrossMode("");
                 screen.repaint();
                 ORIPA.mainFrame.repaint();
             }
         } else if (e.getSource() == menuItemCrossPoint) {
             PaintConfig.bDispCrossPoint = menuItemCrossPoint.isSelected();
             if (menuItemCrossPoint.isSelected()) {
+                ORIPA.doc.setCrossMode("point");
                 PaintConfig.bDispCrossLine = false;
                 menuItemCrossLine.setSelected(false);
                 screen.recalcCrossPoint();
             } else {
+                ORIPA.doc.setCrossMode("");
                 screen.repaint();
                 ORIPA.mainFrame.repaint();
             }
@@ -189,9 +193,11 @@ implements ActionListener, AdjustmentListener, Observer{
     @Override
     public void adjustmentValueChanged(AdjustmentEvent e) {
         if (e.getSource() == scrollBarHorizontal) {
+            ORIPA.doc.setCrossX(e.getValue());
             screen.setCrossLineAngle(e.getValue() * 185 / 1000);  // 0..185
             screen.setCrossPointX(e.getValue() * 400 / 1000 - 200);  // -200..200
         } else if (e.getSource() == scrollBarVertical) {
+            ORIPA.doc.setCrossY(e.getValue());
             screen.setCrossLinePosition(e.getValue() * 300 / 1000 - 150); // -150..150
             screen.setCrossPointY(e.getValue() * 400 / 1000 - 200);  // -200..200
         }

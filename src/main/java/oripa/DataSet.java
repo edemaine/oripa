@@ -34,6 +34,8 @@ public class DataSet {
     public String originalAuthorName;
     public String reference;
     public String memo;
+    public int crossX, crossY;
+    public String crossMode;
 
     public DataSet() {
     }
@@ -57,6 +59,9 @@ public class DataSet {
         originalAuthorName = doc.getOriginalAuthorName();
         reference = doc.getReference();
         memo = doc.getMemo();
+        crossX = doc.getCrossX();
+        crossY = doc.getCrossY();
+        crossMode = doc.getCrossMode();
     }
 
     public void recover(Doc doc) {
@@ -71,6 +76,9 @@ public class DataSet {
         doc.setOriginalAuthorName(originalAuthorName);
         doc.setReference(reference);
         doc.setMemo(memo);;
+        doc.setCrossX(crossX);
+        doc.setCrossY(crossY);
+        doc.setCrossMode(crossMode);
     }
 
     public void setPaperSize(double d) {
@@ -143,5 +151,29 @@ public class DataSet {
 
     public String getMemo() {
         return memo;
+    }
+
+    public void setCrossX(int x) {
+        crossX = x;
+    }
+
+    public int getCrossX() {
+        return crossX;
+    }
+
+    public void setCrossY(int y) {
+        crossY = y;
+    }
+
+    public int getCrossY() {
+        return crossY;
+    }
+
+    public void setCrossMode(String mode) {
+        crossMode = mode;
+    }
+
+    public String getCrossMode() {
+        return crossMode;
     }
 }
